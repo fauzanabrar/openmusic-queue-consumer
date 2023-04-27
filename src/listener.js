@@ -13,9 +13,14 @@ class Listener {
     try {
       const { targetEmail, playlistId } = JSON.parse(message.content.toString());
 
-      const playlist = await this._playlistsService.getPlaylistById(playlistId);
-      console.log(playlist)
-      playlist.songs = await this._playlistSongsService.getSongsByPlaylistId(playlistId);
+      const { id, name } = await this._playlistsService.getPlaylistById(playlistId);
+      const playlist = {
+        playlist: {
+          id,
+          name,
+          songs: await this._playlistSongsService.getSongsByPlaylistId(playlistId),
+        },
+      };
 
       const result = await this._mailSender.sendEmail(targetEmail, JSON.stringify(playlist));
 
